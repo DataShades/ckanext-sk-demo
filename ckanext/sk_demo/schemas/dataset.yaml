@@ -1,0 +1,544 @@
+scheming_version: 2
+dataset_type: dataset
+about: Full DCAT AP (2 and 3) schema
+about_url: http://github.com/ckan/ckanext-dcat
+
+dataset_fields:
+
+- field_name: title
+  label: Title
+  preset: title
+  required: true
+  display_property: dcterms:title
+  help_text: The name of the data set.
+
+- field_name: name
+  label: URL
+  preset: dataset_slug
+  form_placeholder: eg. my-dataset
+
+- field_name: notes
+  label: Description
+  required: true
+  display_property: dcterms:description
+  form_snippet: markdown.html
+  help_text: The data set's description.
+
+- field_name: license_id
+  label: License
+  form_snippet: license.html
+  help_text: License definitions and additional information can be found at http://opendefinition.org/.
+
+- field_name: owner_org
+  label: Organization
+  preset: dataset_organization
+  help_text: The CKAN organization the dataset belongs to.
+
+- field_name: publisher
+  label: Publisher
+  repeating_label: Publisher
+  help_text: This property refers to an entity (organisation) responsible for making the Dataset available
+  repeating_once: true
+  required: true
+  repeating_subfields:
+
+    - field_name: name
+      label: Name
+      help_text: A name for a person or organization
+      required: true
+
+    - field_name: description
+      label: Description
+      help_text: A textual description
+
+    - field_name: type
+      label: Type
+      help_text: Type of organisation
+      required: true
+
+    - field_name: homepage
+      label: Homepage
+      help_text: A homepage for a person or organization
+      display_snippet: link.html
+
+    - field_name: emailadress
+      label: Email
+      display_snippet: email.html
+      help_text: An e-mail address used by a person or a specific administrative function within an organization
+
+    - field_name: classification
+      label: Classification
+
+    - field_name: identifier
+      label: Identifier
+      help_text: The main identifier for the agent, e.g. a Swedish organization should use the "organisationsnummer"
+
+    - field_name: alternativeURI
+      label: Alternative URI
+      help_text: A known alternative URI for this agent
+
+- field_name: creator
+  label: Creator
+  repeating_label: Creator
+  repeating_once: true
+  display_property: dcterms:creator
+  help_text: This property refers to the entity (organisation) primarily responsible for producing the dataset
+  repeating_subfields:
+
+    - field_name: name
+      label: Name
+      help_text: A name for a person or organization
+      required: true
+
+    - field_name: description
+      label: Description
+      help_text: A textual description
+
+    - field_name: type
+      label: Type
+      help_text: Type of organisation
+      required: true
+
+    - field_name: homepage
+      label: Homepage
+      help_text: A homepage for a person or organization
+      display_snippet: link.html
+
+    - field_name: emailadress
+      label: Email
+      display_snippet: email.html
+      help_text: An e-mail address used by a person or a specific administrative function within an organization
+
+    - field_name: classification
+      label: Classification
+
+    - field_name: identifier
+      label: Identifier
+      help_text: The main identifier for the agent, e.g. a Swedish organization should use the "organisationsnummer"
+
+    - field_name: alternativeURI
+      label: Alternative URI
+      help_text: A known alternative URI for this agent
+
+- field_name: attribution
+  label: Attribution
+  repeating_label: Attribution
+  repeating_once: true
+  display_property: prov:qualifiedAttribution
+  help_text: A qualified attribution makes it possible to point to actors in other roles than publisher and creator
+  repeating_subfields:
+
+    - field_name: role
+      label: Role
+      help_text: Responsible party role
+      required: true
+
+    - field_name: party
+      label: Party
+      required: true
+
+- field_name: contact
+  label: Contact point
+  repeating_once: true
+  help_text: This property contains contact information that can be used for flagging errors in the Dataset or sending comments
+  repeating_label: Contact point
+  repeating_subfields:
+
+    - field_name: kind
+      label: Kind
+      help_text: This property tells wether the contect point corresponds to an Individual or an Organisation
+      required: true
+
+    - field_name: formattedName
+      label: Formatted Name
+      help_text: The text that corresponds to the name of the contactpoint
+      required: true
+
+    - field_name: email
+      label: Email
+      display_snippet: email.html
+      help_text: An e-mail address used by a person or a specific administrative function within an organization
+      required: true
+
+    - field_name: telephone
+      label: Telephone
+      help_text: The telephone number should be given including country calling code, e.g. +4618100000
+
+    - field_name: adress
+      label: Adress
+      help_text: To specify the delivery address for the contact point
+
+    - field_name: website
+      label: Website
+      help_text: An webb address providing more information about a person or a specific administrative function within an organization
+
+- field_name: tag_string
+  label: Keywords
+  preset: tag_string_autocomplete
+  form_placeholder: eg. economy, mental health, government
+  display_property: dcat:keyword
+  help_text: This property contains a keyword or tag describing the Dataset
+
+- field_name: theme
+  label: Category
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  help_text: This property refers to a category of the Dataset. A Dataset may be associated with multiple themes.
+  display_property: dcat:theme
+
+- field_name: applicable_legislation
+  label: Applicable legislation
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  help_text: Legislation that mandates the creation or management of the Dataset.
+  display_property: dcatap:applicableLegislation
+
+- field_name: identifier
+  label: Identifier
+  help_text: This property contains the main identifier for the Dataset, e.g. the URI or other unique identifier in the context of the Catalogue
+  display_property: dcterms:identifier
+
+- field_name: alternate_identifier
+  label: Other identifier
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  help_text: This property refers to a secondary identifier of the Dataset, such as MAST/ADS 48, DataCite 49 , DOI 50 , EZID 51 or W3ID 5
+  display_property: adms:identifier
+
+  # Note: this will fall back to metadata_created if not present
+- field_name: issued
+  label: Release date
+  preset: dcat_date
+  help_text: This property contains the date of formal issuance (e.g., publication) of the Dataset.
+  display_property: dcterms:issued
+
+  # Note: this will fall back to metadata_modified if not present
+- field_name: modified
+  label: Date modified
+  preset: dcat_date
+  help_text: This property contains the most recent date on which the Dataset was changed or modified.
+  display_property: dcterms:modified
+
+
+- field_name: language
+  label: Language
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  help_text: This property refers to a language of the Dataset. This property can be repeated if there are multiple languages in the Dataset.
+  display_property: dcterms:language
+
+- field_name: url
+  label: Landing page
+  form_placeholder: http://example.com/dataset.json
+  display_snippet: link.html
+  help_text: This property refers to a web page that provides access to the Dataset, its Distributions and/or additional information. It is intended to point to a landing page at the original data provider, not to a page on a site of a third party, such as an aggregator
+  display_property: dcat:landingPage
+
+- field_name: conforms_to
+  label: Conforms to
+  repeating_label: Conforms to
+  repeating_once: true
+  display_property: dcterms:conformsTo
+  help_text: This property refers to an implementing rule or other specification
+  repeating_subfields:
+
+    - field_name: title
+      label: Title
+      help_text: A name given to the standard.
+
+    - field_name: description
+      label: Description
+      help_text: An account of the standard
+
+- field_name: named_geographical_area
+  label: Named geographical area
+  display_property: dcterms:spatial
+  help_text: A spatial region or named place. The geographical area covered by the dataset. It is recommended to use URIs from Geonames in the form: http://sws.geonames.org/6695072
+
+- field_name: geographical_area
+  label: Geographical area
+  display_property: dcterms:spatial
+  help_text: Geographical area
+
+- field_name: temporal_coverage
+  label: Time period
+  display_property: dcterms:temporal
+  help_text: The temporal period or periods the dataset covers.
+  repeating_once: true
+  repeating_subfields:
+
+    - field_name: start
+      label: Start
+      preset: dcat_date
+      help_text: Start date of the period for which the dataset contains data
+
+    - field_name: end
+      label: Stop
+      preset: dcat_date
+      help_text: End date of the period for which the dataset contains data
+
+- field_name: temporal_resolution
+  label: Temporal resolution
+  help_text: This property refers to the minimum time period resolvable in the dataset. For example P1Y which indicate that data is given per year
+  display_property: dcat:temporalResolution
+
+- field_name: spatial_resolution_in_meters
+  label: Spatial resolution
+  help_text: This property refers to the minimum spatial separation resolvable in a dataset, measured in meters
+  display_property: dcat:spatialResolutionInMeters
+
+- field_name: frequency
+  label: Frequency of update
+  display_property: dcterms:accrualPeriodicity
+  help_text: This property refers to the frequency at which Dataset is updated.
+
+- field_name: version
+  label: Version
+  validators: ignore_missing unicode_safe package_version_validator
+  help_text: This property contains a version number or other version designation of the Dataset.
+  display_property: dcat:version
+
+- field_name: version_notes
+  label: Version notes
+  validators: ignore_missing unicode_safe
+  form_snippet: markdown.html
+  display_snippet: markdown.html
+  display_property: adms:versionNotes
+  help_text: This property contains a description of the differences between this version and a previous version of the Dataset. This property can be repeated for parallel language versions of the version notes
+
+- field_name: source
+  label: Source
+  display_property: dcterms:source
+  help_text: This property refers to a related Dataset from which the described Dataset is derived.
+
+- field_name: access_rights
+  label: Access rights
+  validators: ignore_missing unicode_safe
+  display_property: dcterms:accessRights
+  help_text: This property refers to information that indicates whether the Dataset/service is open data, has access restrictions or is not public
+
+- field_name: fee
+  label: Fee
+  display_property: dcterms:offers
+  repeating_once: true
+  repeating_subfields:
+
+    - field_name: description
+      label: Description
+      help_text: Here you provide information about the fee, the basis for how the fees is calculated as well as other relevant information
+
+    - field_name: webpage
+      label: Webpage
+      help_text: A webpage with information about the fee and the basis upon which the fee is calculated is described in more detail
+
+- field_name: has_version
+  label: Has version
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  display_property: dcat:hasVersion
+  help_inline: true
+  help_text: This property refers to a related Dataset that is a version, edition, or adaptation of the described Datase
+
+- field_name: is_referenced_by
+  label: Is referenced by
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  display_property: dcterms:isReferencedBy
+  help_text: This property is about a related resource, such as a publication, that references, cites, or otherwise points to the dataset
+
+- field_name: related_resource
+  label: Related resource
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  display_property: dcterms:relation
+  help_text: This property refers to a related resource
+
+- field_name: qualified_relation
+  label: Qualified related resource
+  display_property: dcat:qualifiedRelation
+  help_text: A qualified related resource makes it possible to point to a related resources togheter with a role that clarifies the character of the relation
+
+- field_name: documentation
+  label: Documentation
+  preset: multiple_text
+  display_property: foaf:page
+  validators: ignore_missing scheming_multiple_text
+  help_text: This property refers to a page or document about this Dataset.
+
+- field_name: provenance
+  label: Provenance
+  display_property: dcterms:provenance
+  form_snippet: markdown.html
+  display_snippet: markdown.html
+  help_text: This property contains a statement about the lineage of a Dataset.
+
+- field_name: distribution
+  label: Distribution
+  display_property: dcat:distribution
+  form_snippet: license.html
+  help_text: This property links the Dataset to an available Distribution
+
+- field_name: in_series
+  label: In series
+  display_property: dcat:inSeries
+  help_text: A dataset series of which the dataset is part.
+
+resource_fields:
+
+- field_name: url
+  label: URL
+  preset: resource_url_upload
+
+- field_name: name
+  label: Name
+  form_placeholder:
+  help_text: A descriptive title for the resource.
+
+- field_name: description
+  label: Description
+  form_snippet: markdown.html
+  help_text: A free-text account of the resource.
+
+- field_name: format
+  label: Format
+  preset: resource_format_autocomplete
+  help_text: File format. If not provided it will be guessed.
+
+- field_name: mimetype
+  label: Media type
+  validators: if_empty_guess_format ignore_missing unicode_safe
+  help_text: Media type for this format. If not provided it will be guessed.
+
+- field_name: compress_format
+  label: Compress format
+  help_text: The format of the file in which the data is contained in a compressed form.
+
+- field_name: package_format
+  label: Package format
+  help_text: The format of the file in which one or more data files are grouped together.
+
+- field_name: size
+  label: Size
+  validators: ignore_missing int_validator
+  form_snippet: number.html
+  display_snippet: file_size.html
+  help_text: File size in bytes
+
+- field_name: hash
+  label: Hash
+  help_text: Checksum of the downloaded file.
+
+- field_name: hash_algorithm
+  label: Hash Algorithm
+  help_text: Algorithm used to calculate to checksum.
+
+- field_name: rights
+  label: Rights
+  form_snippet: markdown.html
+  display_snippet: markdown.html
+  help_text: Some statement about the rights associated with the resource.
+
+- field_name: availability
+  label: Availability
+  help_text: Indicates how long it is planned to keep the resource available.
+
+- field_name: status
+  label: Status
+  preset: select
+  choices:
+    - value: http://purl.org/adms/status/Completed
+      label: Completed
+    - value: http://purl.org/adms/status/UnderDevelopment
+      label: Under Development
+    - value: http://purl.org/adms/status/Deprecated
+      label: Deprecated
+    - value: http://purl.org/adms/status/Withdrawn
+      label: Withdrawn
+  help_text: The status of the resource in the context of maturity lifecycle.
+
+- field_name: license
+  label: License
+  help_text: License in which the resource is made available. If not provided will be inherited from the dataset.
+
+  # Note: this falls back to the standard resource url field
+- field_name: access_url
+  label: Access URL
+  help_text: URL that gives access to the dataset (defaults to the standard resource URL).
+
+  # Note: this falls back to the standard resource url field
+- field_name: download_url
+  label: Download URL
+  display_snippet: link.html
+  help_text: URL that provides a direct link to a downloadable file (defaults to the standard resource URL).
+
+- field_name: issued
+  label: Release date
+  preset: dcat_date
+  help_text: Date of publication of the resource.
+
+- field_name: modified
+  label: Modification date
+  preset: dcat_date
+  help_text: Most recent date on which the resource was changed, updated or modified.
+
+- field_name: temporal_resolution
+  label: Temporal resolution
+  help_text: Minimum time period resolvable in the distribution.
+
+- field_name: spatial_resolution_in_meters
+  label: Spatial resolution in meters
+  help_text: Minimum spatial separation resolvable in the distribution, measured in meters.
+
+- field_name: language
+  label: Language
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  help_text: Language or languages of the resource.
+
+- field_name: documentation
+  label: Documentation
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  help_text: A page or document about this resource.
+
+- field_name: conforms_to
+  label: Conforms to
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  help_text: An established schema to which the described resource conforms.
+
+- field_name: applicable_legislation
+  label: Applicable legislation
+  preset: multiple_text
+  validators: ignore_missing scheming_multiple_text
+  help_text: The legislation that mandates the creation or management of the resource.
+
+- field_name: access_services
+  label: Access services
+  repeating_label: Access service
+  repeating_subfields:
+
+    - field_name: uri
+      label: URI
+
+    - field_name: title
+      label: Title
+
+    - field_name: endpoint_description
+      label: Endpoint description
+
+    - field_name: endpoint_url
+      label: Endpoint URL
+      preset: multiple_text
+
+    - field_name: serves_dataset
+      label: Serves dataset
+      preset: multiple_text
+      validators: ignore_missing scheming_multiple_text
+
+  help_text: A data service that gives access to the resource.
+
+  # Note: if not provided, this will be autogenerated
+- field_name: uri
+  label: URI
+  help_text: An URI for this resource (if not provided it will be autogenerated).
