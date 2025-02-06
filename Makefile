@@ -43,6 +43,7 @@ ckan_tag = ckan-2.11.1
 ext_list = \
     dcat \
 	ingest \
+	collection \
 	files flakes \
 	scheming \
 	toolbelt \
@@ -50,7 +51,7 @@ ext_list = \
 
 _ = \
 	admin-panel \
-	charts collection cloudstorage comments \
+	charts  cloudstorage comments \
 	editable-config \
 	geoview googleanalytics \
     hierarchy harvest \
