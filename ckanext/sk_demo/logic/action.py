@@ -33,26 +33,34 @@ def sk_demo_get_sum(context: Context, data_dict: dict[str, Any]):
     }
 
 
-@validate(schema.something_create)
-def sk_demo_something_create(context: Context, data_dict: dict[str, Any]):
-    """Create something object.
+@validate(schema.td_file_create)
+def sk_demo_td_file_create(context: Context, data_dict: dict[str, Any]):
+    """Upload file for tabledesigner ingestion.
 
     Args:
-        hello (str): aliquam erat volutpat
-        world: (str): nullam tempus
-        plugin_data (dict[str, Any], optional): aliquam feugiat tellus ut neque
+        resource_id (str): ID of the owner
 
     Returns:
-        details of the new something object
+        details of the new file
     """
-    tk.check_access("sk_demo_something_create", context, data_dict)
+    tk.check_access("sk_demo_td_file_create", context, data_dict)
 
-    smth = Something(
-        hello=data_dict["hello"],
-        world=data_dict["world"],
-        plugin_data=data_dict.get("plugin_data", {}),
+    internal_context = tk.fresh_context(context)
+    internal_context["ignore_auth"] = True
+
+    file = tk.get_action("files_file_create")(
+        internal_context,
+        {
+            "upload": data_dict["upload"],
+            "name": data_dict.get("name"),
+            "storage": "td",
+        },
     )
-    model.Session.add(smth)
-    model.Session.commit()
-
-    return smth.dictize(context)
+    return tk.get_action("files_transfer_ownership")(
+        internal_context,
+        {
+            "id": file["id"],
+            "owner_id": data_dict["resource_id"],
+            "owner_type": "resource",
+        },
+    )

@@ -17,16 +17,12 @@ def get_sum(
 
 
 @validator_args
-def something_create(
-    not_empty: types.Validator,
-    unicode_safe: types.Validator,
+def td_file_create(
+    not_missing: types.Validator,
     ignore_empty: types.Validator,
-    convert_to_json_if_string: types.Validator,
-    dict_only: types.Validator,
 ) -> types.Schema:
-    """Schema for sk_demo_something_create action."""
     return {
-        "hello": [not_empty, unicode_safe],
-        "world": [not_empty, unicode_safe],
-        "plugin_data": [ignore_empty, convert_to_json_if_string, dict_only],
+        "name": [ignore_empty],
+        "resource_id": [not_missing],
+        "upload": [not_missing],
     }

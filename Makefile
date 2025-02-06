@@ -42,14 +42,16 @@ ckan_tag = ckan-2.11.1
 # branch master`
 ext_list = \
     dcat \
+	ingest \
+	files flakes \
 	scheming \
+	toolbelt \
 	xloader
 
 _ = \
 	admin-panel \
 	charts collection cloudstorage comments \
 	editable-config \
-	files flakes \
 	geoview googleanalytics \
     hierarchy harvest \
 	let-me-in \
@@ -58,7 +60,6 @@ _ = \
 	resource-indexer \
 	 search-tweaks spatial saml syndicate \
 	security \
-	toolbelt \
 	unfold \
 	vip-portal \
 
@@ -82,11 +83,12 @@ dev-admin-panel = https://github.com/DataShades/ckanext-admin-panel branch maste
 
 remote-cloudstorage = https://github.com/DataShades/ckanext-cloudstorage.git tag v0.3.2
 remote-charts = https://github.com/DataShades/ckanext-charts.git tag v1.6.0
-remote-collection = https://github.com/DataShades/ckanext-collection.git tag v0.2.0a0
+remote-collection = https://github.com/DataShades/ckanext-collection.git tag v0.2.1
 remote-comments = https://github.com/DataShades/ckanext-comments.git tag v0.3.2a0
 remote-dcat = https://github.com/ckan/ckanext-dcat.git tag v2.2.0
 remote-editable-config = https://github.com/ckan/ckanext-editable-config tag v0.0.6
-remote-files = https://github.com/DataShades/ckanext-files.git tag v1.0.0a0
+remote-files = https://github.com/DataShades/ckanext-files.git commit da297b2
+remote-ingest = https://github.com/DataShades/ckanext-ingest.git tag v1.4.3
 remote-flakes = https://github.com/DataShades/ckanext-flakes.git tag v0.4.5
 remote-geoview = https://github.com/ckan/ckanext-geoview.git tag v0.1.0
 remote-googleanalytics = https://github.com/ckan/ckanext-googleanalytics.git tag v2.4.0
@@ -105,7 +107,7 @@ remote-security = https://github.com/data-govt-nz/ckanext-security tag 4.1.1
 
 remote-spatial = https://github.com/ckan/ckanext-spatial tag v2.1.1
 remote-syndicate = https://github.com/DataShades/ckanext-syndicate tag v2.2.2
-remote-toolbelt = https://github.com/DataShades/ckanext-toolbelt.git tag v0.4.24
+remote-toolbelt = https://github.com/DataShades/ckanext-toolbelt.git tag v0.5.2
 remote-unfold = https://github.com/DataShades/ckanext-unfold.git tag v1.0.2
 remote-vip-portal = https://github.com/DataShades/ckanext-vip-portal.git tag v0.2.5a1
 remote-xloader = https://github.com/ckan/ckanext-xloader.git tag 2.0.0
@@ -115,7 +117,7 @@ remote-xloader = https://github.com/ckan/ckanext-xloader.git tag 2.0.0
 package_extras-remote-googleanalytics = requirements
 package_extras-remote-files = opendal,libcloud
 package_extras-remote-resource-indexer = pdf
-
+package_extras-remote-ingest = xlsx
 
 
 ###############################################################################

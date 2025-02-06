@@ -1,0 +1,49 @@
+{% extends "collection/serialize/htmx_table/record.html" %}
+
+
+{% block value %}
+    {% if column == "actions" %}
+        {% if false %}
+            <form action="{{ h.url_for('sk_demo.reset_td_fields', file_id=record.id, id=collection.params.id, resource_id=collection.params.resource_id) }}" method="POST" class="d-inline">
+                {{ h.csrf_input() }}
+                <button class="btn-sm btn-primary">
+                    <i class="fa fa-rotate"></i>
+                    {{ _("Reset fields") }}
+                </button>
+            </form>
+        {% endif %}
+
+        <form action="{{ h.url_for('sk_demo.ingest_td_file', file_id=record.id, id=collection.params.id, resource_id=collection.params.resource_id) }}" method="POST" class="d-inline">
+            {{ h.csrf_input() }}
+            <button class="btn-sm btn-primary">
+                <i class="fa fa-plus-circle"></i>
+                {{ _("Insert") }}
+            </button>
+        </form>
+
+        <form action="{{ h.url_for('sk_demo.ingest_td_file', file_id=record.id, method='upsert', id=collection.params.id, resource_id=collection.params.resource_id) }}" method="POST" class="d-inline">
+            {{ h.csrf_input() }}
+            <button class="btn-sm btn-primary">
+                <i class="fa fa-rotate"></i>
+                {{ _("Update") }}
+            </button>
+        </form>
+
+        <form action="{{ h.url_for('sk_demo.reset_td_file', file_id=record.id, id=collection.params.id, resource_id=collection.params.resource_id) }}" method="POST" class="d-inline">
+            {{ h.csrf_input() }}
+            <button class="btn-sm btn-warning">
+                {{ _("Reset fields") }}
+            </button>
+        </form>
+
+        {% if h.check_access("files_file_delete", {"id": record.id}) %}
+            <button class="btn-sm btn-danger" onclick="ckan.sandbox().client.call('POST', 'files_file_delete', {'id': '{{ record.id }}'}, () => document.getElementById('{{ collection.serializer.form_id }}').dispatchEvent(new CustomEvent('collection-refresh')))" )">
+                <i class="fa fa-trash"></i>
+            </button>
+        {% endif %}
+
+    {% else %}
+        {{ super() }}
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "package/resource_edit_base.html" %}
+
+{% block primary_content_inner %}
+
+    {% if allow_upload %}
+    <label class="btn btn-default files--no-after-content">
+        {{ _("Upload") }}
+        <input hidden type="file"
+            data-module="files--auto-upload"
+            data-module-adapter="Standard"
+            data-module-action="sk_demo_td_file_create"
+            data-module-spinner="#td-file--upload-spinner"
+            data-module-request-params="{{ {'resource_id': resource.id}|tojson|forceescape }}"
+            data-module-success-event="collection-refresh"
+            data-module-event-target="#{{ files.serializer.form_id }}"
+        />
+        <i id="td-file--upload-spinner" class="spinner-border spinner-border-sm" hidden></i>
+    </label>
+    {% endif %}
+
+
+    {{ files.serializer.render() | safe }}
+
+    <h1 class="hide-heading">{% block form_title %}{{ _('Edit resource') }}{% endblock %}</h1>
+    {% block form %}{% endblock %}
+{% endblock %}

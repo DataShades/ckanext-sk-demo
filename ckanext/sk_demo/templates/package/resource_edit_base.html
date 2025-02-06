@@ -1,0 +1,8 @@
+{% ckan_extends %}
+
+
+{% block inner_primary_nav %}
+    {{ super() }}
+    {{ h.build_nav_icon('sk_demo.td_files', _('Files'), id=pkg.name, resource_id=res.id, icon="file") }}
+    {{ h.build_nav_icon('sk_demo.td_snapshots', _('Snapshots'), id=pkg.name, resource_id=res.id, icon="clock") }}
+{% endblock %}
