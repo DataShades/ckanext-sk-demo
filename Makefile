@@ -44,7 +44,7 @@ ext_list = \
     dcat \
 	ingest \
 	collection \
-	files flakes \
+	files \
 	scheming \
 	toolbelt \
 	xloader
