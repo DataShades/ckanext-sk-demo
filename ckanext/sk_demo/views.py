@@ -122,18 +122,20 @@ def ingest_td_file(id: str, resource_id: str, file_id: str):
     ingest_method = tk.request.args.get("method", "insert")
     rows = _get_rows(file_id)
 
-    records = []
-    for idx, record in enumerate(rows, 1):
-        record.pop(None, None)
-        if ingest_method in ("upsert", "update"):
-            record["_id"] = idx
-
-        records.append(record)
-
     info = tk.get_action("datastore_info")(
         {},
         {"id": resource_id},
     )
+    records = []
+
+    has_custom_pk = any(f.get("tdpkreq") == "pk" for f in info["fields"])
+    for idx, record in enumerate(rows, 1):
+        record.pop(None, None)
+        if not has_custom_pk and ingest_method in ("upsert", "update"):
+            record["_id"] = idx
+
+        records.append(record)
+
     snapshot = None
     if info["meta"]["count"]:
         snapshot = _make_snapshot(resource_id)
@@ -211,6 +213,10 @@ def _get_rows(file_id: str, storage_name: str = "td") -> Generator[dict[str, Any
         _name, ext = os.path.splitext(file_dict["name"])
         if ext == ".xlsx":
             handler = ingest_shared.strategies["ingest:xlsx"]()
+
+        elif ext == ".json":
+            handler = ingest_shared.strategies["ingest:json_list"]()
+
         else:
             return tk.abort(422, tk._("Unknown source type"))
 
