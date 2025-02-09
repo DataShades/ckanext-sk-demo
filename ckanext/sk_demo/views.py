@@ -20,9 +20,10 @@ import os
 from typing import Any, Generator
 import itertools as it
 import contextlib
+from ckan.logic import parse_params
 from ckanext.collection.shared import get_collection
 from flask import Blueprint
-
+from flask.views import MethodView
 import ckan.plugins.toolkit as tk
 from ckan import model
 from ckanext.files.utils import IterableBytesReader
@@ -31,6 +32,8 @@ from ckanext.ingest import shared as ingest_shared
 from ckanext.ingest.strategy.xlsx import XlsxStrategy
 from ckanext.tabledesigner.datastore import create_table
 from ckanext.datastore.blueprint import dump_to
+
+from ckanext.sk_demo.shared import enrich_flake_name, enrich_mapping
 
 __all__ = ["bp"]
 
@@ -91,6 +94,130 @@ def td_snapshots(id: str, resource_id: str):
             "files": files,
         },
     )
+
+
+@bp.route("/dataset/<id>/data-enrichment")
+def enrich(id: str):
+    """Files used as a source for tabledesigner of the resource."""
+    pkg_dict = tk.get_action("package_show")({}, {"id": id})
+    files = get_collection("sk_demo_data_enrichment", {"id": pkg_dict["id"]}, True)
+    schema = tk.get_action("scheming_dataset_schema_show")({}, {"type": "dataset"})
+    labels = {
+        "dataset": {
+            f["field_name"]: f["label"]
+            for f in schema["dataset_fields"]
+            if f.get("label")
+        },
+        "resource": {
+            f["field_name"]: f["label"]
+            for f in schema["resource_fields"]
+            if f.get("label")
+        },
+    }
+    return tk.render(
+        "sk_demo/data_enrichment.html",
+        {
+            "pkg_dict": pkg_dict,
+            "files": files,
+            "allow_upload": True,
+            "mappings": enrich_mapping(pkg_dict["id"]),
+            "labels": labels,
+        },
+    )
+
+@bp.route("/dataset/<id>/data-enrichment/delete", methods=["POST"])
+def enrich_delete(id: str):
+    """Files used as a source for tabledesigner of the resource."""
+    pkg_dict = tk.get_action("package_show")({}, {"id": id})
+    flake_name = enrich_flake_name(pkg_dict["id"])
+    try:
+        flake = tk.get_action("flakes_flake_lookup")(
+            {"ignore_auth": True}, {"author_id": None, "name": flake_name}
+        )
+    except tk.ObjectNotFound:
+        pass
+    else:
+        params = parse_params(tk.request.form)
+        flake["data"][params["type"]].pop(params["field"])
+        tk.get_action("flakes_flake_update")({"ignore_auth": True}, flake)
+        enrich_mapping.reset(pkg_dict["id"])
+
+    return tk.redirect_to("sk_demo.enrich", id=id)
+
+
+class EnrichConfiguration(MethodView):
+    def post(self, id: str, file_id: str):
+        """Files used as a source for tabledesigner of the resource."""
+        pkg_dict = tk.get_action("package_show")({}, {"id": id})
+        rows = _get_rows(file_id, "data_enrichment")
+        params = parse_params(tk.request.form)
+        field = params["field"]
+
+        flake_name = enrich_flake_name(pkg_dict["id"])
+        try:
+            flake = tk.get_action("flakes_flake_lookup")(
+                {"ignore_auth": True}, {"author_id": None, "name": flake_name}
+            )
+        except tk.ObjectNotFound:
+            flake = tk.get_action("flakes_flake_create")(
+                {"ignore_auth": True},
+                {
+                    "author_id": None,
+                    "name": flake_name,
+                    "data": {
+                        "dataset": {},
+                        "resource": {},
+                    },
+                },
+            )
+
+        flake["data"]["dataset" if field[:2] == "d-" else "resource"][field[2:]] = {
+            row[params["value"]]: row[params["label"]] for row in rows
+        }
+        tk.get_action("flakes_flake_update")({"ignore_auth": True}, flake)
+        enrich_mapping.reset(pkg_dict["id"])
+        return tk.redirect_to("sk_demo.enrich", id=id)
+
+    def get(self, id: str, file_id: str):
+        """Files used as a source for tabledesigner of the resource."""
+        pkg_dict = tk.get_action("package_show")({}, {"id": id})
+        rows = _get_rows(file_id, "data_enrichment")
+        row = next(rows, None)
+        if not row or len(row) < 2:
+            tk.h.flash_error("Cannot detect mapping options in file")
+            return tk.redirect_to("sk_demo.enrich", id=id)
+
+        schema = tk.get_action("scheming_dataset_schema_show")({}, {"type": "dataset"})
+        return tk.render(
+            "sk_demo/enrich_configuration.html",
+            {
+                "pkg_dict": pkg_dict,
+                "allow_upload": True,
+                "column_options": [{"value": column} for column in row],
+                "dataset_field_options": [
+                    {
+                        "value": field["field_name"],
+                        "text": field.get("label", field["field_name"]),
+                    }
+                    for field in schema["dataset_fields"]
+                    if field.get("display_snippet", True)
+                ],
+                "resource_field_options": [
+                    {
+                        "value": field["field_name"],
+                        "text": field.get("label", field["field_name"]),
+                    }
+                    for field in schema["resource_fields"]
+                    if field.get("display_snippet", True)
+                ],
+            },
+        )
+
+
+bp.add_url_rule(
+    "/dataset/<id>/data-enrichment/add/<file_id>",
+    view_func=EnrichConfiguration.as_view("enrich_configuration"),
+)
 
 
 @bp.route("/dataset/<id>/resource/<resource_id>/files/td")
@@ -213,6 +340,9 @@ def _get_rows(file_id: str, storage_name: str = "td") -> Generator[dict[str, Any
         _name, ext = os.path.splitext(file_dict["name"])
         if ext == ".xlsx":
             handler = ingest_shared.strategies["ingest:xlsx"]()
+
+        elif ext == ".csv":
+            handler = ingest_shared.strategies["ingest:simple_csv"]()
 
         elif ext == ".json":
             handler = ingest_shared.strategies["ingest:json_list"]()

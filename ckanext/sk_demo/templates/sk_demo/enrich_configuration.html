@@ -1,0 +1,50 @@
+{% extends "package/edit_base.html" %}
+
+{% import "macros/form.html" as form %}
+
+{% block primary_content_inner %}
+
+
+    <form action="" method="POST">
+        {{ h.csrf_input() }}
+
+        {{ form.select("value", label=_("From"), options=column_options) }}
+
+        {{ form.select("label", label=_("To"), options=column_options) }}
+
+        {% call form.input_block("field", label=_("Field")) %}
+            <select id="field" name="field" class="form-control">
+                {% for option in dataset_field_options %}
+                    <option value="d-{{ option.value }}">
+                        {{ option.text or option.value }}
+                    </option>
+                {% endfor %}
+
+                {#
+                <optgroup label="{{ _('Dataset') }}">
+                    {% for option in dataset_field_options %}
+                        <option value="d-{{ option.value }}">
+                            {{ option.text or option.value }}
+                        </option>
+                    {% endfor %}
+                </optgroup>
+                <optgroup label="{{ _('Resource') }}">
+                    {% for option in resource_field_options %}
+                        <option value="r-{{ option.value }}">
+                            {{ option.text or option.value }}
+                        </option>
+                    {% endfor %}
+                </optgroup>
+                #}
+            </select>
+
+        {% endcall %}
+
+        <div class="form-actions">
+            <button class="btn btn-primary">
+                {{ _("Save") }}
+            </button>
+        </div>
+
+    </form>
+{% endblock %}

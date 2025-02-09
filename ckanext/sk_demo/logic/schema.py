@@ -26,3 +26,15 @@ def td_file_create(
         "resource_id": [not_missing],
         "upload": [not_missing],
     }
+
+
+@validator_args
+def data_enrichment_create(
+    not_missing: types.Validator,
+    ignore_empty: types.Validator,
+) -> types.Schema:
+    return {
+        "name": [ignore_empty],
+        "package_id": [not_missing],
+        "upload": [not_missing],
+    }

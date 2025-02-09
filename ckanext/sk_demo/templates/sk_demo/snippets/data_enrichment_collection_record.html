@@ -1,0 +1,21 @@
+{% extends "collection/serialize/htmx_table/record.html" %}
+
+
+{% block value %}
+    {% if column == "actions" %}
+
+        <a href="{{ h.url_for('sk_demo.enrich_configuration', id=collection.params.id, file_id=record.id) }}" class="btn btn-sm btn-primary">
+            {{ _("Add mapping") }}
+        </a>
+
+        {% if h.check_access("files_file_delete", {"id": record.id}) %}
+            <button class="btn-sm btn-danger" onclick="ckan.sandbox().client.call('POST', 'files_file_delete', {'id': '{{ record.id }}'}, () => document.getElementById('{{ collection.serializer.form_id }}').dispatchEvent(new CustomEvent('collection-refresh')))" )">
+                <i class="fa fa-trash"></i>
+            </button>
+        {% endif %}
+
+    {% else %}
+        {{ super() }}
+    {% endif %}
+
+{% endblock %}

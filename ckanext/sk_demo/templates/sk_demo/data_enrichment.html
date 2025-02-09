@@ -1,0 +1,89 @@
+{% extends "package/edit_base.html" %}
+
+{% block primary_content_inner %}
+
+    {% if allow_upload %}
+        <label class="btn btn-default files--no-after-content">
+            {{ _("Upload") }}
+            <input hidden type="file"
+                data-module="files--auto-upload"
+                data-module-adapter="Standard"
+                data-module-action="sk_demo_data_enrichment_create"
+                data-module-spinner="#td-file--upload-spinner"
+                data-module-request-params="{{ {'package_id': pkg_dict.id}|tojson|forceescape }}"
+                data-module-success-event="collection-refresh"
+                data-module-event-target="#{{ files.serializer.form_id }}"
+            />
+            <i id="td-file--upload-spinner" class="spinner-border spinner-border-sm" hidden></i>
+        </label>
+    {% endif %}
+
+
+    {{ files.serializer.render() | safe }}
+
+    {% if mappings.dataset %}
+
+        {#<h2>{{ _("Dataset") }}</h2>#}
+        {% for field, mapping in mappings.dataset.items() %}
+            <table class="table table-striped table-sm">
+                <caption align="top">
+                    {{ labels.dataset[field] }}
+
+                    <form action="{{ h.url_for('sk_demo.enrich_delete', id=pkg_dict.id) }}" method="POST" class="d-inline">
+                        {{ h.csrf_input() }}
+                        <input name="type" type="hidden" value="dataset"/>
+                        <input name="field" type="hidden" value="{{ field }}"/>
+                        <button class="btn-sm btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+
+                </caption>
+                <tr>
+                    <th>{{ _("Value") }}</th>
+                    <th>{{ _("Label") }}</th>
+                </tr>
+
+                {% for value, label in mapping.items() %}
+                    <tr>
+                        <td>{{ value }}</td>
+                        <td>{{ label }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+    {% endif  %}
+
+    {% if mappings.resource %}
+        <h2>{{ _("Resource") }}</h2>
+        {% for field, mapping in mappings.resource.items() %}
+            <table class="table table-striped table-sm">
+                <caption align="top">
+                    {{ labels.resource[field] }}
+                    <form action="{{ h.url_for('sk_demo.enrich_delete', id=pkg_dict.id) }}" method="POST" class="d-inline">
+                        {{ h.csrf_input() }}
+                        <input name="type" type="hidden" value="resource"/>
+                        <input name="field" type="hidden" value="{{ field }}"/>
+                        <button class="btn-sm btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                </caption>
+                <tr>
+                    <th>{{ _("Value") }}</th>
+                    <th>{{ _("Label") }}</th>
+                </tr>
+
+                {% for value, label in mapping.items() %}
+                    <tr>
+                        <td>{{ value }}</td>
+                        <td>{{ label }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+    {% endif %}
+
+
+
+{% endblock %}

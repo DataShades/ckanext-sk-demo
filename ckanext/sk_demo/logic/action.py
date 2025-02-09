@@ -35,6 +35,39 @@ def sk_demo_get_sum(context: Context, data_dict: dict[str, Any]):
     }
 
 
+@validate(schema.data_enrichment_create)
+def sk_demo_data_enrichment_create(context: Context, data_dict: dict[str, Any]):
+    """Upload file for tabledesigner ingestion.
+
+    Args:
+        resource_id (str): ID of the owner
+
+    Returns:
+        details of the new file
+    """
+    tk.check_access("sk_demo_data_enrichment_create", context, data_dict)
+
+    internal_context = tk.fresh_context(context)
+    internal_context["ignore_auth"] = True
+
+    file = tk.get_action("files_file_create")(
+        internal_context,
+        {
+            "upload": data_dict["upload"],
+            "name": data_dict.get("name"),
+            "storage": "data_enrichment",
+        },
+    )
+    return tk.get_action("files_transfer_ownership")(
+        internal_context,
+        {
+            "id": file["id"],
+            "owner_id": data_dict["package_id"],
+            "owner_type": "package",
+        },
+    )
+
+
 @validate(schema.td_file_create)
 def sk_demo_td_file_create(context: Context, data_dict: dict[str, Any]):
     """Upload file for tabledesigner ingestion.

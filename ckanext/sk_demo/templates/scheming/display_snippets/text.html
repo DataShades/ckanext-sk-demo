@@ -1,0 +1,10 @@
+{% set value = data[field.field_name] %}
+
+{% if data.title %}
+    {% set mapping = h.sk_demo_enrich_mapping(data.id).dataset[field.field_name] %}
+    {% if mapping %}
+        {% set value = mapping[value] or value %}
+    {% endif %}
+{% endif %}
+
+{{ value }}

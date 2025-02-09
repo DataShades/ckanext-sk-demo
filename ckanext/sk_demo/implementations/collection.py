@@ -31,6 +31,7 @@ class Collection(p.SingletonPlugin):
         return {
             "sk_demo_td_files": TdFilesCollection,
             "sk_demo_td_snapshots": TdSnapshotsCollection,
+            "sk_demo_data_enrichment": EnrichmentCollection,
         }
 
 
@@ -38,10 +39,11 @@ class FilesData(shared.data.ApiSearchData["dict[str, Any]", "TdFilesCollection"]
     action = "files_file_search"
     owner_type = "resource"
     storage = "td"
+    owner_field_name = "resource_id"
 
     def get_filters(self) -> dict[str, Any]:
         return {
-            "owner_id": self.attached.params.get("resource_id"),
+            "owner_id": self.attached.params.get(self.owner_field_name),
             "owner_type": self.owner_type,
             "storage": self.storage,
         }
@@ -81,7 +83,32 @@ class TdSnapshotsCollection(shared.collection.ApiSearchCollection):
         labels={"ctime": "Creation time", "actions": "Actions"},
         serializers={
             "ctime": [
-                (lambda v, o, n, r, s: tk.h.render_datetime(v, with_hours=True, with_seconds=True), {})
+                (
+                    lambda v, o, n, r, s: tk.h.render_datetime(
+                        v, with_hours=True, with_seconds=True
+                    ),
+                    {},
+                )
+            ]
+        },
+    )
+
+
+class EnrichmentCollection(shared.collection.ApiSearchCollection):
+    DataFactory = FilesData.with_attributes(
+        storage="data_enrichment",
+        owner_field_name="id",
+        owner_type="package",
+    )
+    SerializerFactory = FilesSerializer.with_attributes(
+        record_template="sk_demo/snippets/data_enrichment_collection_record.html",
+    )
+    ColumnsFactory = shared.columns.Columns.with_attributes(
+        names=["name", "ctime", "actions"],
+        labels={"name": "Filename", "ctime": "Creation time", "actions": "Actions"},
+        serializers={
+            "ctime": [
+                (lambda v, o, n, r, s: tk.h.render_datetime(v, with_hours=True), {})
             ]
         },
     )

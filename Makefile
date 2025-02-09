@@ -45,6 +45,7 @@ ext_list = \
 	ingest \
 	collection \
 	files \
+	flakes \
 	scheming \
 	toolbelt \
 	xloader
@@ -89,8 +90,8 @@ remote-comments = https://github.com/DataShades/ckanext-comments.git tag v0.3.2a
 remote-dcat = https://github.com/ckan/ckanext-dcat.git tag v2.2.0
 remote-editable-config = https://github.com/ckan/ckanext-editable-config tag v0.0.6
 remote-files = https://github.com/DataShades/ckanext-files.git commit da297b2
-remote-ingest = https://github.com/DataShades/ckanext-ingest.git tag v1.4.5
-remote-flakes = https://github.com/DataShades/ckanext-flakes.git tag v0.4.5
+remote-ingest = https://github.com/DataShades/ckanext-ingest.git tag v1.4.6
+remote-flakes = https://github.com/DataShades/ckanext-flakes.git tag v0.4.6
 remote-geoview = https://github.com/ckan/ckanext-geoview.git tag v0.1.0
 remote-googleanalytics = https://github.com/ckan/ckanext-googleanalytics.git tag v2.4.0
 remote-harvest = https://github.com/ckan/ckanext-harvest.git tag v1.5.6

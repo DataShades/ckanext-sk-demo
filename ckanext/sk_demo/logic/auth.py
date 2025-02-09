@@ -13,6 +13,11 @@ def sk_demo_get_sum(context: Context, data_dict: dict[str, Any]):
     return {"success": True}
 
 
+def sk_demo_data_enrichment_create(context: Context, data_dict: dict[str, Any]):
+    """Authenticated user can create something."""
+    return authz.is_authorized("package_update", {"id": data_dict["package_id"]})
+
+
 def sk_demo_td_file_create(context: Context, data_dict: dict[str, Any]):
     """Authenticated user can create something."""
     return authz.is_authorized("resource_update", {"id": data_dict["resource_id"]})
